@@ -234,7 +234,6 @@ class User extends Eloquent\Model {
 			{
 				if(Input::has('role_ids') && $role->active && ! in_array($role->id, Input::get('role_ids')))
 				{
-					echo 'delete';
 					DB::table('roles_users')
 						->where('role_id', '=', $role->id)
 						->where('user_id', '=', $this->id)
@@ -243,8 +242,6 @@ class User extends Eloquent\Model {
 
 				if(Input::has('role_ids') && ! $role->active && in_array($role->id, Input::get('role_ids')))
 				{
-					echo 'insert';
-					var_dump(array('user_id' => '', 'role_id' => $role->id));
 					DB::table('roles_users')
 						->insert(array('user_id' => $this->id, 'role_id' => $role->id));
 				}
@@ -301,6 +298,5 @@ public function put_edit($id = 0)
 	return Redirect::to('users/index');
 }
 ```
-
 
 # Congrats... Done!
