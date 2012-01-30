@@ -20,10 +20,10 @@ require 'ability.php';
 require 'rule.php';
 
 class Authority extends Authority\Ability {
-	
+
 	protected static function current_user()
 	{
-		return \Auth::user() ?: new Account;
+		return \Auth::user() ?: new User;
 	}
-	
+
 }

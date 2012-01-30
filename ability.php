@@ -80,7 +80,7 @@ abstract class Ability {
 
 	public static function dealias($action)
 	{
-		return static::$_action_aliases[$action] ?: $action; 
+		return static::$_action_aliases[$action] ?: $action;
 	}
 
 	protected static function determine_action($action)

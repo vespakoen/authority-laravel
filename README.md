@@ -10,20 +10,16 @@ All credits go to machuga for PHP-izing this awesome library
 
 - This bundle is not (yet) available via artisan.
 - You can use this migration to setup the database tables: https://github.com/Vespakoen/ShopHub/blob/develop/application/migrations/2012_01_24_1327455253_add_authority_tables.php
-- As you can see I used the term "Accounts" in stead of "Users".
-- And lastly, Unlike the Codeigniter Authorization library, "Accounts" and "Roles" have "has_and_belongs_to_many" relations.
+- And lastly, Unlike the Codeigniter Authorization library, "Users" and "Roles" have "has_and_belongs_to_many" relations.
 
 
 ## Configuration
 
 ### Setup your Models
 
-Feel free to change Account into User or something else you wish
-
-
-#### Account model
+#### User model
 ```PHP
-class Account extends Eloquent\Model {
+class User extends Eloquent\Model {
 
 	public static $timestamps = true;
 
@@ -75,10 +71,10 @@ class Account extends Eloquent\Model {
 #### Role model
 ```PHP
 class Role extends Eloquent\Model {
-	
-	public function accounts()
+
+	public function users()
 	{
-		return $this->has_and_belongs_to_many('Account');
+		return $this->has_and_belongs_to_many('User');
 	}
 
 }

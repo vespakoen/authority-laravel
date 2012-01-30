@@ -10,44 +10,44 @@ return array(
 	|
 	*/
 
-	'initialize' => function($account)
+	'initialize' => function($user)
 	{
 		Authority::action_alias('manage', array('create', 'read', 'update', 'delete'));
 		Authority::action_alias('moderate', array('update', 'delete'));
 
-		if ( ! $account) return false;
+		if ( ! $user) return false;
 
-		if($account::has_role('store_owner'))
+		if($user::has_role('store_owner'))
 		{
-			Authority::allow('manage', 'Store', function($store) use ($account)
+			Authority::allow('manage', 'Store', function($store) use ($user)
 			{
-				return DB::table('stores')->where_account_id($account->id)->first();
-			}); 
-		}
-
-		if($account::has_role('organisation'))
-		{
-			Authority::allow('manage', 'Organisation', function($organisation) use ($account)
-			{
-				return DB::table('organisation')->where_account_id($account->id)->first();
+				return DB::table('stores')->where_user_id($user->id)->first();
 			});
 		}
 
-		if($account::has_any_role('store_owner', 'manufacturer', 'reseller'))
+		if($user::has_role('organisation'))
 		{
-			// Store_owners, Manufacturers and Resellers can "manage" their account 
-			Authority::allow('moderate', 'Account', function ($that_account) use ($account)
+			Authority::allow('manage', 'Organisation', function($organisation) use ($user)
 			{
-				return $that_account->id == $account->id;
+				return DB::table('organisation')->where_user_id($user->id)->first();
 			});
 		}
 
-		if($account::has_role('superadmin'))
+		if($user::has_any_role('store_owner', 'manufacturer', 'reseller'))
 		{
-			Authority::allow('manage', 'all'); 
-			Authority::deny('delete', 'Account', function ($that_account) use ($account)
+			// Store_owners, Manufacturers and Resellers can "manage" their user
+			Authority::allow('moderate', 'User', function ($that_user) use ($user)
 			{
-				return $that_account->id == $account->id;
+				return $that_user->id == $user->id;
+			});
+		}
+
+		if($user::has_role('superadmin'))
+		{
+			Authority::allow('manage', 'all');
+			Authority::deny('delete', 'User', function ($that_user) use ($user)
+			{
+				return $that_user->id == $user->id;
 			});
 		}
 	}
