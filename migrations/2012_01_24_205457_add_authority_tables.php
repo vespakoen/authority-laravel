@@ -1,6 +1,6 @@
 <?php
 
-class Add_Authority_Tables {
+class Authority_add_authority_tables {
 
 	public function up()
 	{
@@ -8,7 +8,7 @@ class Add_Authority_Tables {
 		{
 			$table->create();
 			$table->increments('id');
-			$table->string('email')->unique();
+			$table->string('email');
 			$table->string('password');
 			$table->string('name');
 			$table->timestamp('created_at');
@@ -19,17 +19,7 @@ class Add_Authority_Tables {
 		{
 			$table->create();
 			$table->increments('id');
-			$table->string('key')->unique();
-		});
-
-		Schema::table('role_lang', function($table)
-		{
-			$table->create();
-			$table->increments('id');
-			$table->integer('role_id');
-			$table->integer('language_id');
-			$table->string('name');
-			$table->string('description');
+			$table->string('key');
 		});
 
 		Schema::table('roles_users', function($table)

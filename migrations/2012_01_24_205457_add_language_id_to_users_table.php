@@ -1,6 +1,6 @@
 <?php
 
-class Add_Language_Id_To_Accounts_Table {
+class Authority_add_language_id_to_users_table {
 
 	/**
 	 * Make changes to the database.
@@ -9,7 +9,7 @@ class Add_Language_Id_To_Accounts_Table {
 	 */
 	public function up()
 	{
-		Schema::table('accounts', function($table)
+		Schema::table('users', function($table)
 		{
 			$table->integer('language_id')->default('1');
 		});
@@ -22,7 +22,7 @@ class Add_Language_Id_To_Accounts_Table {
 	 */
 	public function down()
 	{
-		Schema::table('accounts', function($table)
+		Schema::table('users', function($table)
 		{
 			$table->drop_column('language_id');
 		});
