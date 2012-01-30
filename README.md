@@ -55,6 +55,8 @@ return array(
 If you already have the Eloquent bundle installed you can skip this step.
 To install Eloquent, use the `cd` command to go to your laravel directory, now run the following commands:
 
+`php artisan bundle:install authority`
+
 `php artisan bundle:install eloquent`
 
 `php artisan migrate:install`
