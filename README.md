@@ -22,7 +22,8 @@ All credits go to machuga for PHP-izing this awesome library
 - Enter a key (minimum length 32 chars) in config/application.php
 - Enter a session driver in config/session.php
 - Change the value of 'inflection' in config/strings.php to the one below this line
-```
+
+```php
 'inflection' => array(
 
 	'user' => 'users',
