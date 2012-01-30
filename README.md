@@ -10,9 +10,7 @@ All credits go to machuga for PHP-izing this awesome library
 Unlike the Codeigniter Authorization library, "Users" and "Roles" have "has_and_belongs_to_many" relations.
 
 
-## Configuration
-
-### Setup the bundle
+## Installation
 
 #### Setting up Laravel
 
@@ -153,45 +151,114 @@ Modify `bundles/authority/config/authority.php` to your likings, more info on ho
 
 ## Bonus points
 
-I added 1 variable and 2 more methods to the User model to insert and update a user with validation.
+Here is my User model with 2 extra methods for validating and inserting / updating the User it also manages roles.
 
 ```php
-public $rules = array(
-	'email' => 'required|email',
-	'password' => 'required',
-	'name' => 'required',
-);
+class User extends Eloquent\Model {
 
-public function validate_and_insert()
-{
-	$validator = new Validator(Input::all(), $this->rules);
+	public static $timestamps = true;
 
-	if ($validator->valid())
+	public $rules = array(
+		'email' => 'required|email',
+		'name' => 'required',
+	);
+
+	public function roles()
 	{
-		$this->email = Input::get('email');
-		$this->password = Hash::make(Input::get('password'));
-		$this->name = Input::get('name');
-
-		$this->save();
+		return $this->has_and_belongs_to_many('Role');
 	}
 
-	return $validator->errors;
-}
-
-public function validate_and_update()
-{
-	$validator = new Validator(Input::all(), $this->rules);
-
-	if ($validator->valid())
+	public static function has_role($key)
 	{
-		$this->email = Input::get('email');
-		if($password = Input::get('password')) $this->password = Hash::make($password);
-		$this->name = Input::get('name');
+		foreach(Auth::user()->roles as $role)
+		{
+			if($role->key == $key)
+			{
+				return true;
+			}
+		}
 
-		$this->save();
+		return false;
 	}
 
-	return $validator->errors;
+	public static function has_any_role($keys)
+	{
+		if( ! is_array($keys))
+		{
+			$keys = func_get_args();
+		}
+
+		foreach(Auth::user()->roles as $role)
+		{
+			if(in_array($role->key, $keys))
+			{
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	public function validate_and_insert()
+	{
+		$this->rules['password'] = 'required';
+		$validator = new Validator(Input::all(), $this->rules);
+
+		if ($validator->valid())
+		{
+			$this->email = Input::get('email');
+			$this->password = Hash::make(Input::get('password'));
+			$this->name = Input::get('name');
+			$this->save();
+
+			if(Input::has('role_ids'))
+			{
+				foreach(Input::get('role_ids') as $role_id)
+				{
+					DB::table('roles_users')
+						->insert(array('user_id' => $this->id, 'role_id' => $role_id));
+				}
+			}
+		}
+
+		return $validator->errors;
+	}
+
+	public function validate_and_update()
+	{
+		$validator = new Validator(Input::all(), $this->rules);
+		if ($validator->valid())
+		{
+			$roles = DB::query("SELECT roles.id, EXISTS(SELECT 1 FROM roles_users WHERE role_id = roles.id AND user_id = ?) AS active FROM roles", array($this->id));
+			foreach($roles as $role)
+			{
+				if(Input::has('role_ids') && $role->active && ! in_array($role->id, Input::get('role_ids')))
+				{
+					echo 'delete';
+					DB::table('roles_users')
+						->where('role_id', '=', $role->id)
+						->where('user_id', '=', $this->id)
+						->delete();
+				}
+
+				if(Input::has('role_ids') && ! $role->active && in_array($role->id, Input::get('role_ids')))
+				{
+					echo 'insert';
+					var_dump(array('user_id' => '', 'role_id' => $role->id));
+					DB::table('roles_users')
+						->insert(array('user_id' => $this->id, 'role_id' => $role->id));
+				}
+			}
+
+			$this->email = Input::get('email');
+			if($password = Input::get('password')) $this->password = Hash::make($password);
+			$this->name = Input::get('name');
+			$this->save();
+		}
+
+		return $validator->errors;
+	}
+
 }
 ```
 
