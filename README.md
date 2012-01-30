@@ -43,7 +43,7 @@ return array(
 		'location' => 'eloquent'
 	),
 	'authority' => array(
-		'location' => 'authority-laravel',
+		'location' => 'authority',
 		'auto' => true
 	)
 );
