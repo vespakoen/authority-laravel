@@ -7,9 +7,7 @@ Check https://github.com/machuga/codeigniter-authority-authorization for more in
 All credits go to machuga for PHP-izing this awesome library
 
 ## NOTE
-
-- This bundle is not (yet) available via artisan.
-- And lastly, Unlike the Codeigniter Authorization library, "Users" and "Roles" have "has_and_belongs_to_many" relations.
+Unlike the Codeigniter Authorization library, "Users" and "Roles" have "has_and_belongs_to_many" relations.
 
 
 ## Configuration
@@ -147,8 +145,94 @@ class Role extends Eloquent\Model {
 }
 ```
 
+
 ### Setting up Rules
 
 Modify `bundles/authority/config/authority.php` to your likings, more info on how to do this can be found at https://github.com/machuga/codeigniter-authority-authorization
+
+
+## Bonus points
+
+I added 1 variable and 2 more methods to the User model to insert and update a user with validation.
+
+```php
+public $rules = array(
+	'email' => 'required|email',
+	'password' => 'required',
+	'name' => 'required',
+);
+
+public function validate_and_insert()
+{
+	$validator = new Validator(Input::all(), $this->rules);
+
+	if ($validator->valid())
+	{
+		$this->email = Input::get('email');
+		$this->password = Hash::make(Input::get('password'));
+		$this->name = Input::get('name');
+
+		$this->save();
+	}
+
+	return $validator->errors;
+}
+
+public function validate_and_update()
+{
+	$validator = new Validator(Input::all(), $this->rules);
+
+	if ($validator->valid())
+	{
+		$this->email = Input::get('email');
+		if($password = Input::get('password')) $this->password = Hash::make($password);
+		$this->name = Input::get('name');
+
+		$this->save();
+	}
+
+	return $validator->errors;
+}
+```
+
+Now in your controller or route you would handle the inserts and updates like this:
+
+```php
+public function post_add()
+{
+	$user = new User;
+
+	$errors = $user->validate_and_insert();
+	if(count($errors->all()) > 0)
+	{
+		return Redirect::to('users/add')
+					->with('errors', $errors)
+					->with('notification', 'Successfully created user')
+					->with_input('except', array('password'));
+	}
+
+	return Redirect::to('users/index');
+}
+
+public function put_edit($id = 0)
+{
+	$user = User::find($id);
+	if( ! $user OR $id == 0)
+	{
+		return Redirect::to('users/index');
+	}
+
+	$errors = $user->validate_and_update();
+	if(count($errors->all()) > 0)
+	{
+		return Redirect::to('users/edit')
+					->with('errors', $errors)
+					->with('notification', 'Successfully updated user')
+					->with_input('except', array('password'));
+	}
+
+	return Redirect::to('users/index');
+}
+```
 
 # Congrats... Done!
