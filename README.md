@@ -271,11 +271,11 @@ public function post_add()
 	{
 		return Redirect::to('users/add')
 					->with('errors', $errors)
-					->with('notification', 'Successfully created user')
 					->with_input('except', array('password'));
 	}
 
-	return Redirect::to('users/index');
+	return Redirect::to('users/index')
+					->with('notification', 'Successfully created user');
 }
 
 public function put_edit($id = 0)
@@ -291,11 +291,11 @@ public function put_edit($id = 0)
 	{
 		return Redirect::to('users/edit')
 					->with('errors', $errors)
-					->with('notification', 'Successfully updated user')
 					->with_input('except', array('password'));
 	}
 
-	return Redirect::to('users/index');
+	return Redirect::to('users/index')
+					->with('notification', 'Successfully updated user');
 }
 ```
 
