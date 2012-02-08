@@ -28,24 +28,6 @@ Unlike the Codeigniter Authorization library, "Users" and "Roles" have "has_and_
 ),
 ```
 
-#### Loading the bundle
-
-In order to use the bundle you have to add it to the `bundles/bundles.php` file.
-It should look similar to this:
-
-```
-return array(
-	'eloquent' => array(
-		'location' => 'eloquent'
-	),
-	'authority' => array(
-		'location' => 'authority',
-		'auto' => true
-	)
-);
-```
-
-
 #### Setting up Eloquent & Migrations
 
 If you already have the Eloquent bundle installed you can skip this step.
