@@ -14,7 +14,7 @@ Unlike the Codeigniter Authorization library, "Users" and "Roles" have "has_and_
 
 #### Setting up Laravel
 
-- Enter you Database settings in config/database.php
+- Enter your database settings in config/database.php
 - Enter a key (minimum length 32 chars) in config/application.php
 - Enter a session driver in config/session.php
 - Change the value of 'inflection' in config/strings.php to the one below this line
@@ -27,15 +27,26 @@ Unlike the Codeigniter Authorization library, "Users" and "Roles" have "has_and_
 
 ),
 ```
+- Change the value of 'bundle' in config/application.php to the one below this line
+
+```php
+'bundle' => array(
+	'cache' => 0,
+	'auto'  => array(
+		'authority'
+	),
+),
+```
+
 
 #### Setting up Eloquent & Migrations
 
 If you already have the Eloquent bundle installed you can skip this step.
 To install Eloquent, use the `cd` command to go to your laravel directory, now run the following commands:
 
-`php artisan bundle:install authority`
-
 `php artisan bundle:install eloquent`
+
+`php artisan bundle:install authority`
 
 `php artisan migrate:install`
 
