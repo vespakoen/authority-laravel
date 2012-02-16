@@ -27,15 +27,15 @@ Unlike the Codeigniter Authorization library, "Users" and "Roles" have "has_and_
 
 ),
 ```
-- Change the value of 'bundle' in config/application.php to the one below this line
+- Add Eloquent and Authority to 'application/bundles.php' like below
 
 ```php
-'bundle' => array(
-	'cache' => 0,
-	'auto'  => array(
-		'authority'
-	),
-),
+return array(
+	'eloquent',
+	'authority' => array(
+		'auto' => true
+	)
+);
 ```
 
 
