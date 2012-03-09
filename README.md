@@ -97,7 +97,7 @@ class User extends Eloquent\Model {
 		return $this->has_and_belongs_to_many('Role');
 	}
 
-	public static function has_role($key)
+	public function has_role($key)
 	{
 		foreach(Auth::user()->roles as $role)
 		{
@@ -110,7 +110,7 @@ class User extends Eloquent\Model {
 		return false;
 	}
 
-	public static function has_any_role($keys)
+	public function has_any_role($keys)
 	{
 		if( ! is_array($keys))
 		{
@@ -168,7 +168,7 @@ class User extends Eloquent\Model {
 		return $this->has_and_belongs_to_many('Role');
 	}
 
-	public static function has_role($key)
+	public function has_role($key)
 	{
 		foreach(Auth::user()->roles as $role)
 		{
@@ -181,7 +181,7 @@ class User extends Eloquent\Model {
 		return false;
 	}
 
-	public static function has_any_role($keys)
+	public function has_any_role($keys)
 	{
 		if( ! is_array($keys))
 		{
