@@ -31,7 +31,14 @@ Unlike the Codeigniter Authorization library, "Users" and "Roles" have "has_and_
 
 ```php
 return array(
-	'eloquent',
+	'eloquent' => array(
+		'autoloads' => array(
+			'map' => array(
+				'Eloquent\\Model'    => '(:bundle)/model.php',
+				'Eloquent\\Hydrator' => '(:bundle)/hydrator.php',
+			),
+		),
+	),
 	'authority' => array(
 		'auto' => true
 	)
