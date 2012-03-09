@@ -17,7 +17,7 @@ return array(
 
 		if ( ! $user) return false;
 
-		if($user::has_role('store_owner'))
+		if($user->has_role('store_owner'))
 		{
 			Authority::allow('manage', 'Store', function($store) use ($user)
 			{
@@ -25,7 +25,7 @@ return array(
 			});
 		}
 
-		if($user::has_role('organisation'))
+		if($user->has_role('organisation'))
 		{
 			Authority::allow('manage', 'Organisation', function($organisation) use ($user)
 			{
@@ -33,7 +33,7 @@ return array(
 			});
 		}
 
-		if($user::has_any_role('store_owner', 'manufacturer', 'reseller'))
+		if($user->has_any_role('store_owner', 'manufacturer', 'reseller'))
 		{
 			// Store_owners, Manufacturers and Resellers can "manage" their user
 			Authority::allow('moderate', 'User', function ($that_user) use ($user)
@@ -42,7 +42,7 @@ return array(
 			});
 		}
 
-		if($user::has_role('superadmin'))
+		if($user->has_role('superadmin'))
 		{
 			Authority::allow('manage', 'all');
 			Authority::deny('delete', 'User', function ($that_user) use ($user)
