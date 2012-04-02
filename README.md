@@ -101,7 +101,7 @@ class User extends Eloquent\Model {
 	{
 		foreach(Auth::user()->roles as $role)
 		{
-			if($role->role == $key)
+			if($role->name == $key)
 			{
 				return true;
 			}
@@ -119,7 +119,7 @@ class User extends Eloquent\Model {
 
 		foreach(Auth::user()->roles as $role)
 		{
-			if(in_array($role->role, $keys))
+			if(in_array($role->name, $keys))
 			{
 				return true;
 			}
