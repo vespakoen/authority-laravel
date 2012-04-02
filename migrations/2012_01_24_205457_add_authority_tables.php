@@ -4,9 +4,8 @@ class Authority_add_authority_tables {
 
 	public function up()
 	{
-		Schema::table('users', function($table)
+		Schema::create('users', function($table)
 		{
-			$table->create();
 			$table->increments('id');
 			$table->string('email');
 			$table->string('password');
@@ -15,16 +14,14 @@ class Authority_add_authority_tables {
 			$table->timestamp('updated_at');
 		});
 
-		Schema::table('roles', function($table)
+		Schema::create('roles', function($table)
 		{
-			$table->create();
 			$table->increments('id');
-			$table->string('role');
+			$table->string('name');
 		});
 
-		Schema::table('roles_users', function($table)
+		Schema::create('roles_users', function($table)
 		{
-			$table->create();
 			$table->increments('id');
 			$table->integer('user_id');
 			$table->integer('role_id');
@@ -33,20 +30,11 @@ class Authority_add_authority_tables {
 
 	public function down()
 	{
-		Schema::table('users', function($table)
-		{
-			$table->drop();
-		});
+		Schema::drop('users');
 
-		Schema::table('roles', function($table)
-		{
-			$table->drop();
-		});
+		Schema::drop('roles');
 
-		Schema::table('roles_users', function($table)
-		{
-			$table->drop();
-		});
+		Schema::drop('roles_users');
 	}
 
 }
