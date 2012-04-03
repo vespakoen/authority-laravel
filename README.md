@@ -7,7 +7,7 @@ Check https://github.com/machuga/codeigniter-authority-authorization for more in
 All credits go to machuga for PHP-izing this awesome library
 
 ## NOTE
-Unlike the Codeigniter Authorization library, "Users" and "Roles" have "has_and_belongs_to_many" relations.
+Unlike the Codeigniter Authorization library, "Users" and "Roles" have "has_many_and_belongs_to" relations.
 
 
 ## Installation
@@ -17,28 +17,11 @@ Unlike the Codeigniter Authorization library, "Users" and "Roles" have "has_and_
 - Enter your database settings in config/database.php
 - Enter a key (minimum length 32 chars) in config/application.php
 - Enter a session driver in config/session.php
-- Change the value of 'inflection' in config/strings.php to the one below this line
 
-```php
-'inflection' => array(
-
-	'user' => 'users',
-	'role' => 'roles',
-
-),
-```
-- Add Eloquent and Authority to 'application/bundles.php' like below
+- Add Authority to 'application/bundles.php' like below
 
 ```php
 return array(
-	'eloquent' => array(
-		'autoloads' => array(
-			'map' => array(
-				'Eloquent\\Model'    => '(:bundle)/model.php',
-				'Eloquent\\Hydrator' => '(:bundle)/hydrator.php',
-			),
-		),
-	),
 	'authority' => array(
 		'auto' => true
 	)
@@ -86,15 +69,15 @@ By default laravels' auth is configured without Eloquent. to enable this, replac
 
 ### Setup your Models
 
-#### User model (models/user.php)
+#### User model (application/models/user.php)
 ```PHP
-class User extends Eloquent\Model {
+class User extends Model {
 
 	public static $timestamps = true;
 
 	public function roles()
 	{
-		return $this->has_and_belongs_to_many('Role');
+		return $this->has_many_and_belongs_to('Role');
 	}
 
 	public function has_role($key)
@@ -131,13 +114,13 @@ class User extends Eloquent\Model {
 ```
 
 
-#### Role model (models/role.php)
+#### Role model (application/models/role.php)
 ```PHP
-class Role extends Eloquent\Model {
+class Role extends Model {
 
 	public function users()
 	{
-		return $this->has_and_belongs_to_many('User');
+		return $this->has_many_and_belongs_to('User');
 	}
 
 }
@@ -154,7 +137,7 @@ Modify `bundles/authority/config/authority.php` to your likings, more info on ho
 Here is my User model with 2 extra methods for validating and inserting / updating the User it also manages roles.
 
 ```php
-class User extends Eloquent\Model {
+class User extends Model {
 
 	public static $timestamps = true;
 
@@ -165,7 +148,7 @@ class User extends Eloquent\Model {
 
 	public function roles()
 	{
-		return $this->has_and_belongs_to_many('Role');
+		return $this->has_many_and_belongs_to('Role');
 	}
 
 	public function has_role($key)
