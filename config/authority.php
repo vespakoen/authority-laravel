@@ -1,14 +1,15 @@
 <?php
+
 return array(
 
-	/*
-	|--------------------------------------------------------------------------
-	| Initialize User Permissions Based On Roles
-	|--------------------------------------------------------------------------
-	|
-	| This closure is called by the Authority\Ability class' "initialize" method
-	|
-	*/
+    /*
+    |--------------------------------------------------------------------------
+    | Initialize User Permissions Based On Roles
+    |--------------------------------------------------------------------------
+    |
+    | This closure is called by the Authority\Ability class' "initialize" method
+    |
+    */
 
     'initialize' => function($user)
     {
@@ -57,13 +58,13 @@ return array(
             // We can also allow "Actions" on certain "Resources" by results we get from somewhere else, look closely at the next example
             foreach(DB::table('permissions')->where_user_id($user->id)->get() as $permission)
             {
-            	if($permission->type == 'allow')
-            	{
-                	Authority::allow($permission->action, $permission->resource);
+                if($permission->type == 'allow')
+                {
+                    Authority::allow($permission->action, $permission->resource);
                 }
                 else
                 {
-                	Authority::deny($permission->action, $permission->resource);	
+                    Authority::deny($permission->action, $permission->resource);    
                 }
             }
         }
