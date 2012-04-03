@@ -20,7 +20,7 @@ class Authority_add_authority_tables {
 			$table->string('name');
 		});
 
-		Schema::create('roles_users', function($table)
+		Schema::create('role_user', function($table)
 		{
 			$table->increments('id');
 			$table->integer('user_id');
