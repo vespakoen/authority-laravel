@@ -1,0 +1,309 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Authority by Vespakoen</title>
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script src="javascripts/main.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+  </head>
+  <body>
+
+      <header>
+        <h1>Authority</h1>
+        <p>Role Based Access Control bundle for Laravel</p>
+      </header>
+
+      <div id="banner">
+        <span id="logo"></span>
+
+        <a href="https://github.com/Vespakoen/authority-laravel" class="button fork"><strong>Fork On GitHub</strong></a>
+        <div class="downloads">
+          <span>Downloads:</span>
+          <ul>
+            <li><a href="https://github.com/Vespakoen/authority-laravel/zipball/master" class="button">ZIP</a></li>
+            <li><a href="https://github.com/Vespakoen/authority-laravel/tarball/master" class="button">TAR</a></li>
+          </ul>
+        </div>
+
+      </div><!-- end banner -->
+
+    <div class="wrapper">
+      <nav>
+        <ul></ul>
+      </nav>
+      <section>
+        <h1>Welcome to Authority for Laravel.</h1>
+
+<p>This is a clone from codeigniter-authority-authorization
+Check <a href="https://github.com/machuga/codeigniter-authority-authorization">https://github.com/machuga/codeigniter-authority-authorization</a> for more info.
+All credits go to <strong><em>machuga</em></strong> for PHP-izing this awesome library</p>
+
+<h2>Installation</h2>
+
+<ul>
+<li>Enter your database settings in config/database.php</li>
+<li>Choose a session driver in config/session.php</li>
+<li>Run the following commands on the terminal</li>
+</ul><pre><code>$ cd to/your/project/root/
+$ php artisan bundle:install authority
+$ php artisan migrate:install
+$ php artisan migrate
+</code></pre>
+
+<p>Since we don't want updates (via artisan, Laravel's CLI) to break our configuration later, we move the config outside of the Authority bundle.</p>
+
+<ul>
+<li>Move <strong><em>bundles/authority/config/authority.php</em></strong> to <strong><em>application/config/authority.php</em></strong>
+</li>
+</ul><p>If you want your authority config to live in another bundle, you have to point to that location by changing the location in <strong><em>bundles/authority/authority.php</em></strong>.</p>
+
+<ul>
+<li>Edit <strong><em>application/bundles.php</em></strong> and add authority to the array as seen below</li>
+</ul><div class="highlight">
+<pre><span class="x">return array(</span>
+<span class="x">    'authority' =&gt; array(</span>
+<span class="x">        'auto' =&gt; true</span>
+<span class="x">    )</span>
+<span class="x">)</span>
+</pre>
+</div>
+
+
+<h3>Changing auth config to use Eloquent</h3>
+
+<p>For Authority to work, we need to get the logged in user, we use Laravel's auth for this, for this to work, we want Laravel to return the User class, we can do that by changing 2 functions in <strong><em>application/config/auth.php</em></strong></p>
+
+<div class="highlight">
+<pre><span class="x">'user' =&gt; function($id)</span>
+<span class="x">{</span>
+<span class="x">    if (filter_var($id, FILTER_VALIDATE_INT) !== false)</span>
+<span class="x">    {</span>
+<span class="x">        return User::find($id);</span>
+<span class="x">    }</span>
+<span class="x">},</span>
+
+<span class="x">'attempt' =&gt; function($username, $password)</span>
+<span class="x">{</span>
+<span class="x">    $user = User::where_username($username)-&gt;first();</span>
+
+<span class="x">    if ( ! is_null($user) and Hash::check($password, $user-&gt;password))</span>
+<span class="x">    {</span>
+<span class="x">        return $user;</span>
+<span class="x">    }</span>
+<span class="x">},</span>
+
+</pre>
+</div>
+
+
+<h3>Adding the models</h3>
+
+<h4>User model</h4>
+
+<p><strong><em>application/models/user.php</em></strong></p>
+
+<div class="highlight">
+<pre><span class="x">class User extends Model {</span>
+
+<span class="x">    public static $timestamps = true;</span>
+
+<span class="x">    public function roles()</span>
+<span class="x">    {</span>
+<span class="x">        return $this-&gt;has_many_and_belongs_to('Role', 'role_user');</span>
+<span class="x">    }</span>
+
+<span class="x">    public function has_role($key)</span>
+<span class="x">    {</span>
+<span class="x">        foreach(Auth::user()-&gt;roles as $role)</span>
+<span class="x">        {</span>
+<span class="x">            if($role-&gt;name == $key)</span>
+<span class="x">            {</span>
+<span class="x">                return true;</span>
+<span class="x">            }</span>
+<span class="x">        }</span>
+
+<span class="x">        return false;</span>
+<span class="x">    }</span>
+
+<span class="x">    public function has_any_role($keys)</span>
+<span class="x">    {</span>
+<span class="x">        if( ! is_array($keys))</span>
+<span class="x">        {</span>
+<span class="x">            $keys = func_get_args();</span>
+<span class="x">        }</span>
+
+<span class="x">        foreach(Auth::user()-&gt;roles as $role)</span>
+<span class="x">        {</span>
+<span class="x">            if(in_array($role-&gt;name, $keys))</span>
+<span class="x">            {</span>
+<span class="x">                return true;</span>
+<span class="x">            }</span>
+<span class="x">        }</span>
+
+<span class="x">        return false;</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+</pre>
+</div>
+
+
+<h4>Role model</h4>
+
+<p><strong><em>application/models/role.php</em></strong></p>
+
+<div class="highlight">
+<pre><span class="x">class Role extends Model {</span>
+
+<span class="x">    public function users()</span>
+<span class="x">    {</span>
+<span class="x">        return $this-&gt;has_many_and_belongs_to('User');</span>
+<span class="x">    }</span>
+
+<span class="x">}</span>
+</pre>
+</div>
+
+
+<h2>Using Authority</h2>
+
+<p>Authority is very flexible, allowing you to make complex rules, load permissions from different places, and make handy action aliases.</p>
+
+<p>Before we can use Authority, we need to understand how it works. In order to understand how it works, we have to be aware of some concepts.</p>
+
+<h4>Actions</h4>
+
+<ul>
+<li>Actions apply to Resources</li>
+<li>Actions are strings</li>
+<li>Actions can be grouped by action_aliases</li>
+</ul><h4>Resources</h4>
+
+<ul>
+<li>Resources is simply a name for a thing or group of things (User, Page, UserEditButton, PageTitle)</li>
+<li>Resources are strings</li>
+<li>There is a "all" wildcard Resource predefined (handy for admins)</li>
+</ul><h4>Rules</h4>
+
+<ul>
+<li>A Rule is a way to allow or deny a User to perform an Action on a Resource</li>
+<li>A Rule contains 1 Action, 1 Resource and optionally a Closure (internal logic)</li>
+<li>Rules will be initialized once per page load (only when being called) for the user that does the request</li>
+</ul><h4>Allow</h4>
+
+<ul>
+<li>Allow applies a Rule to a User, that allows the user to perform an Action on a Resource</li>
+<li>If the Rule contains a Closure, the User will only be allowed to perform the Action when the Closure returns "true"</li>
+</ul><h4>Deny</h4>
+
+<ul>
+<li>Deny applies a Rule to a user, that denies the user to perform an Action on a Resource</li>
+<li>If the Rule contains a Closure, the User will only be denied from performing the Action when the Closure returns "true"</li>
+</ul><p>Now that we are familiar with these concepts, let's dive into some example configurations.</p>
+
+<pre><code>    'initialize' =&gt; function($user)
+    {
+        // The initialize method (this Closure function) will be ran on every page load when the bundle get's started.
+        // A User Object will be passed into this method and is available via $user
+        // The $user variable is a instantiated User Object (application/models/user.php)
+
+        // First, let's group together some "Actions" so we can later give a User access to multiple actions at once
+        Authority::action_alias('manage', array('create', 'read', 'update', 'delete'));
+        Authority::action_alias('moderate', array('update', 'delete'));
+
+        // If a user doesn't have any roles, we don't have to give him permissions so we can stop right here.
+        if(count($user-&gt;roles) == 0) return false;
+
+        // Let's say we want to "Deny" the User from adding accounts if his age is below 21 (i don't mean to discriminate ;) 
+        // Since we have the User object, and it has an "age" property, we can make a simple if statement.
+        if($user-&gt;age &lt; 21)
+        {
+            // Too young! we "deny" the user to create users, i'm sorry...
+            Authority::deny('create', 'User');
+        }
+
+        if($user-&gt;has_role('admin'))
+        {
+            // The logged in user is an admin, we allow him to perform manage actions (create, read, update, delete) on "all" "Resources".
+            Authority::allow('manage', 'all');
+
+            // Let's make it a little harder, we don't want the admin to be able to delete his own User account, but has to be allowed to delete other Users.
+            // We only know that the "Resource" is a User, But we don't know the User id, we can send that information to the Rule Closure, in the Closure below, the argument is called $that_user.
+            // We also pass in the logged in user, since the Closure is outside of the scope where this comment is in.
+            Authority::deny('delete', 'User', function ($that_user) use ($user)
+            {
+                // If the id of the User that we are trying to delete is equal to our logged in user, we return true, meaning the Deny Rule will be set.
+                return $that_user-&gt;id == $user-&gt;id;
+            });
+        }
+
+        if($user-&gt;has_role('store_owner'))
+        {
+            // What if the logged in User has the role "store_owner", let's allow the user to manage his own store
+            Authority::allow('manage', 'Store', function($store) use ($user)
+            {
+                return ! is_null(DB::table('stores')-&gt;where_id($store-&gt;id)-&gt;where_user_id($user-&gt;id)-&gt;first());
+            });
+        }
+
+        // We can set Allow and Deny Rules by looping through results we get from somewhere else, in this example, a database
+        foreach(DB::table('rules')-&gt;where_user_id($user-&gt;id)-&gt;get() as $permission)
+        {
+            if($permission-&gt;type == 'allow')
+            {
+                Authority::allow($permission-&gt;action, $permission-&gt;resource);
+            }
+            else
+            {
+                Authority::deny($permission-&gt;action, $permission-&gt;resource);
+            }
+        }
+    }
+</code></pre>
+
+<p>Now that we have the initialize method setup, we can do checks throughout our code (controllers/models/views) like this</p>
+
+<pre><code>    // in some controller
+    if(Authority::cannot('create', 'User'))
+    {
+        Redirect::to('home');
+    }
+
+    // in some view
+    &lt;?php if(Authority::can('edit', 'User')): ?&gt;
+        &lt;?php echo HTML::link('users/edit/'.$user-&gt;id, 'Edit User'); ?&gt;
+    &lt;?php endif ?&gt;
+
+    // In some model
+    $user = User::find($id);
+    if(Authority::can('delete', 'User', $user))
+    {
+        $user-&gt;delete();
+    }
+</code></pre>
+
+<h2>Support or Contact</h2>
+
+<p>Having trouble with Authority? Find me in the #laravel IRC channel or contact me @ k.schmeets@gmail.com and i’ll help you sort it out.</p>
+
+<h2>A big Thanks</h2>
+
+<p>To (<a href="/ryanb" class="user-mention">@ryanb</a>) for making CanCan</p>
+
+<p>To (<a href="/machuga" class="user-mention">@machuga</a>) for porting CanCan to PHP</p>
+      </section>
+      <footer>
+        <p>Project maintained by <a href="https://github.com/Vespakoen">Vespakoen</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="http://twitter.com/#!/michigangraham">mattgraham</a></small></p>
+      </footer>
+    </div>
+    <!--[if !IE]><script>fixScale(document);</script><!--<![endif]-->
+  </body>
+</html>
