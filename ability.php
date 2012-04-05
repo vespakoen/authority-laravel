@@ -48,7 +48,8 @@ abstract class Ability {
 
 			foreach ($matches as $matched_rule)
 			{
-				$results[] = !($matched_rule->callback($resource_value) xor $matched_rule->allowed());
+				$allowed = !(($cb = $matched_rule->callback($resource_value)) xor $matched_rule->allowed());
+				$results[] = $allowed ? $cb : false;
 			}
 
 			// Last rule overrides others
