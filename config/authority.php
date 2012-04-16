@@ -22,7 +22,7 @@ return array(
         Authority::action_alias('moderate', array('update', 'delete'));
 
         // If a user doesn't have any roles, we don't have to give him permissions so we can stop right here.
-        if(count($user->roles) == 0) return false;
+        if(count($user->roles) === 0) return false;
 
         if($user->has_role('admin'))
         {
@@ -43,7 +43,7 @@ return array(
             Authority::deny('delete', 'User', function ($that_user) use ($user)
             {
                 // If the id of the User that we are trying to delete is equal to our logged in user, we return true, meaning the Deny Rule will be set.
-                return $that_user->id == $user->id;
+                return (int)$that_user->id === (int)$user->id;
             });
         }
 
@@ -58,7 +58,7 @@ return array(
             // We can also allow "Actions" on certain "Resources" by results we get from somewhere else, look closely at the next example
             foreach(DB::table('permissions')->where_user_id($user->id)->get() as $permission)
             {
-                if($permission->type == 'allow')
+                if($permission->type === 'allow')
                 {
                     Authority::allow($permission->action, $permission->resource);
                 }
