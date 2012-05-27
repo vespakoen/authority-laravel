@@ -10,14 +10,14 @@ class Authority_add_authority_tables {
 			$table->string('email');
 			$table->string('password');
 			$table->string('name');
-			$table->timestamp('created_at');
-			$table->timestamp('updated_at');
+			$table->timestamps();
 		});
 
 		Schema::create('roles', function($table)
 		{
 			$table->increments('id');
 			$table->string('name');
+			$table->timestamps();
 		});
 
 		Schema::create('role_user', function($table)
@@ -25,6 +25,7 @@ class Authority_add_authority_tables {
 			$table->increments('id');
 			$table->integer('user_id');
 			$table->integer('role_id');
+			$table->timestamps();
 		});
 	}
 
@@ -32,7 +33,7 @@ class Authority_add_authority_tables {
 	{
 		Schema::drop('users');
 		Schema::drop('roles');
-		Schema::drop('roles_users');
+		Schema::drop('role_user');
 	}
 
 }
