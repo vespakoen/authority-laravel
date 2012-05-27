@@ -51,12 +51,18 @@ All credits go to <strong><em>machuga</em></strong> for PHP-izing this awesome l
 <ul>
 <li>Enter your database settings in config/database.php</li>
 <li>Choose a session driver in config/session.php</li>
-<li>Run the following commands on the terminal</li>
-</ul><pre><code>$ cd to/your/project/root/
+<li>If you haven't done so already, install Migrations: <br />
+<pre><code>$ cd to/your/project/root/
+$ php artisan migrate:install
+</code></pre></li>
+<li>Run the following commands on the terminal
+<pre><code>$ cd to/your/project/root/
 $ php artisan bundle:install authority
 $ php artisan migrate:install
-$ php artisan migrate
+$ php artisan migrate authority
 </code></pre>
+</li>
+</ul>
 
 <p>Since we don't want updates (via artisan, Laravel's CLI) to break our configuration later, we move the config outside of the Authority bundle.</p>
 
@@ -76,34 +82,6 @@ $ php artisan migrate
 </pre>
 </div>
 
-
-<h3>Changing auth config to use Eloquent</h3>
-
-<p>For Authority to work, we need to get the logged in user, we use Laravel's auth for this, for this to work, we want Laravel to return the User class, we can do that by changing 2 functions in <strong><em>application/config/auth.php</em></strong></p>
-
-<div class="highlight">
-<pre><span class="x">'user' =&gt; function($id)</span>
-<span class="x">{</span>
-<span class="x">    if (filter_var($id, FILTER_VALIDATE_INT) !== false)</span>
-<span class="x">    {</span>
-<span class="x">        return User::find($id);</span>
-<span class="x">    }</span>
-<span class="x">},</span>
-
-<span class="x">'attempt' =&gt; function($username, $password)</span>
-<span class="x">{</span>
-<span class="x">    $user = User::where_username($username)-&gt;first();</span>
-
-<span class="x">    if ( ! is_null($user) and Hash::check($password, $user-&gt;password))</span>
-<span class="x">    {</span>
-<span class="x">        return $user;</span>
-<span class="x">    }</span>
-<span class="x">},</span>
-
-</pre>
-</div>
-
-
 <h3>Adding the models</h3>
 
 <h4>User model</h4>
@@ -111,7 +89,7 @@ $ php artisan migrate
 <p><strong><em>application/models/user.php</em></strong></p>
 
 <div class="highlight">
-<pre><span class="x">class User extends Model {</span>
+<pre><span class="x">class User extends Eloquent {</span>
 
 <span class="x">    public static $timestamps = true;</span>
 
@@ -160,7 +138,7 @@ $ php artisan migrate
 <p><strong><em>application/models/role.php</em></strong></p>
 
 <div class="highlight">
-<pre><span class="x">class Role extends Model {</span>
+<pre><span class="x">class Role extends Eloquent {</span>
 
 <span class="x">    public function users()</span>
 <span class="x">    {</span>
@@ -187,16 +165,20 @@ $ php artisan migrate
 </ul><h4>Resources</h4>
 
 <ul>
-<li>Resources is simply a name for a thing or group of things (User, Page, UserEditButton, PageTitle)</li>
+<li>Resource is simply a name for a thing or group of things (User, Page, UserEditButton, PageTitle)</li>
 <li>Resources are strings</li>
-<li>There is a "all" wildcard Resource predefined (handy for admins)</li>
-</ul><h4>Rules</h4>
+<li>There is an "all" wildcard Resource predefined (handy for admins)</li>
+</ul>
+
+<h4>Rules</h4>
 
 <ul>
 <li>A Rule is a way to allow or deny a User to perform an Action on a Resource</li>
 <li>A Rule contains 1 Action, 1 Resource and optionally a Closure (internal logic)</li>
 <li>Rules will be initialized once per page load (only when being called) for the user that does the request</li>
-</ul><h4>Allow</h4>
+</ul>
+
+<h4>Allow</h4>
 
 <ul>
 <li>Allow applies a Rule to a User, that allows the user to perform an Action on a Resource</li>
