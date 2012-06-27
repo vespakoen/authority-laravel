@@ -39,7 +39,14 @@ class Rule {
 			return $this->_allowed;
 		}
 
-		return $this->_callback($resource_val);
+		$allowed = $this->_callback($resource_val);
+
+		if($this->_allowed)
+		{
+			return $allowed;
+		}
+
+		return ! $allowed;
 	}
 
 	public function matches_action($action)
