@@ -34,12 +34,12 @@ class Rule {
 
 	public function allowed($resource_val)
 	{
-		if($this->_allowed)
+		if(is_null($resource_val) && is_null($this->_callback))
 		{
-			return true;
+			return $this->_allowed;
 		}
 
-		return $this->_callback($resource_val) == true;
+		return $this->_callback($resource_val);
 	}
 
 	public function matches_action($action)
