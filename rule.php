@@ -32,9 +32,9 @@ class Rule {
 		$this->_callback    = $callback;
 	}
 
-	public function allowed()
+	public function allowed($resource_val)
 	{
-		return $this->_allowed;
+		return $this->_callback($resource_val) == true;
 	}
 
 	public function matches_action($action)
@@ -52,14 +52,6 @@ class Rule {
 	public function relevant($action, $resource)
 	{
 		return $this->matches_action($action) && $this->matches_resource($resource);
-	}
-
-	public function callback($resource)
-	{
-		if (isset($this->_callback) && is_string($resource)) {
-			return false;
-		}
-		return (isset($this->_callback)) ? $this->_callback($resource) : true;
 	}
 
 	// Allow callbacks to be called

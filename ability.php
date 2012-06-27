@@ -27,12 +27,13 @@ abstract class Ability {
 	public static function initialize($user)
 	{
 		$config = Config::get('authority::authority');
+
 		call_user_func($config['initialize'], $user);
 	}
 
 	public static function can($action, $resource, $resource_val = null)
 	{
-		if ( empty(static::$_rules))
+		if (empty(static::$_rules))
 		{
 			static::initialize(static::current_user());
 		}
@@ -41,24 +42,15 @@ abstract class Ability {
 		$true_action = static::determine_action($action);
 
 		$matches = static::find_matches($true_action, $resource);
-		if ($matches && ! empty($matches))
-		{
-			$results = array();
-			$resource_value = ($resource_val) ?: $resource;
-
-			foreach ($matches as $matched_rule)
-			{
-				$allowed = !(($cb = $matched_rule->callback($resource_value)) xor $matched_rule->allowed());
-				$results[] = $allowed ? $cb : false;
-			}
-
-			// Last rule overrides others
-			return $results[count($results)-1];
-		}
-		else
+		
+		if(count($matches) === 0)
 		{
 			return false;
 		}
+
+		$rule = end($matches);
+
+		return $rule->allowed($resource_val);
 	}
 
 	public static function cannot($action, $resource, $resource_val = null)
