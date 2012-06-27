@@ -34,6 +34,11 @@ class Rule {
 
 	public function allowed($resource_val)
 	{
+		if($this->_allowed)
+		{
+			return true;
+		}
+
 		return $this->_callback($resource_val) == true;
 	}
 
