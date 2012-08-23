@@ -1,36 +1,44 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
-
   <head>
-    <meta charset='utf-8' />
-    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
-    <meta name="description" content="Authority : Role Based Access Control bundle for Laravel" />
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Authority by Vespakoen</title>
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script src="javascripts/main.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
 
-    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
-
-    <title>Authority</title>
   </head>
-
   <body>
 
-    <!-- HEADER -->
-    <div id="header_wrap" class="outer">
-        <header class="inner">
-          <a id="forkme_banner" href="https://github.com/Vespakoen/authority-laravel">View on GitHub</a>
+      <header>
+        <h1>Authority</h1>
+        <p>Role Based Access Control bundle for Laravel</p>
+      </header>
 
-          <h1 id="project_title">Authority</h1>
-          <h2 id="project_tagline">Role Based Access Control bundle for Laravel</h2>
+      <div id="banner">
+        <span id="logo"></span>
 
-            <section id="downloads">
-              <a class="zip_download_link" href="https://github.com/Vespakoen/authority-laravel/zipball/master">Download this project as a .zip file</a>
-              <a class="tar_download_link" href="https://github.com/Vespakoen/authority-laravel/tarball/master">Download this project as a tar.gz file</a>
-            </section>
-        </header>
-    </div>
+        <a href="https://github.com/Vespakoen/authority-laravel" class="button fork"><strong>View On GitHub</strong></a>
+        <div class="downloads">
+          <span>Downloads:</span>
+          <ul>
+            <li><a href="https://github.com/Vespakoen/authority-laravel/zipball/master" class="button">ZIP</a></li>
+            <li><a href="https://github.com/Vespakoen/authority-laravel/tarball/master" class="button">TAR</a></li>
+          </ul>
+        </div>
+      </div><!-- end banner -->
 
-    <!-- MAIN CONTENT -->
-    <div id="main_content_wrap" class="outer">
-      <section id="main_content" class="inner">
+    <div class="wrapper">
+      <nav>
+        <ul></ul>
+      </nav>
+      <section>
         <h1>Welcome to Authority for Laravel.</h1>
 
 <p>This is a clone from codeigniter-authority-authorization
@@ -193,86 +201,86 @@ $ php artisan migrate:install
 <li>If the Rule contains a Closure, the User will only be denied from performing the Action when the Closure returns "true"</li>
 </ul><p>Now that we are familiar with these concepts, let's dive into some example configurations.</p>
 
-<pre><code>    'initialize' =&gt; function($user)
-    {
-        // The initialize method (this Closure function) will be ran on every page load when the bundle get's started.
-        // A User Object will be passed into this method and is available via $user
-        // The $user variable is a instantiated User Object (application/models/user.php)
+<div class="highlight"><pre>    <span class="s1">'initialize'</span> <span class="o">=&gt;</span> <span class="k">function</span><span class="p">(</span><span class="nv">$user</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="c1">// The initialize method (this Closure function) will be ran on every page load when the bundle get's started.</span>
+        <span class="c1">// A User Object will be passed into this method and is available via $user</span>
+        <span class="c1">// The $user variable is a instantiated User Object (application/models/user.php)</span>
 
-        // First, let's group together some "Actions" so we can later give a User access to multiple actions at once
-        Authority::action_alias('manage', array('create', 'read', 'update', 'delete'));
-        Authority::action_alias('moderate', array('update', 'delete'));
+        <span class="c1">// First, let's group together some "Actions" so we can later give a User access to multiple actions at once</span>
+        <span class="nx">Authority</span><span class="o">::</span><span class="na">action_alias</span><span class="p">(</span><span class="s1">'manage'</span><span class="p">,</span> <span class="k">array</span><span class="p">(</span><span class="s1">'create'</span><span class="p">,</span> <span class="s1">'read'</span><span class="p">,</span> <span class="s1">'update'</span><span class="p">,</span> <span class="s1">'delete'</span><span class="p">));</span>
+        <span class="nx">Authority</span><span class="o">::</span><span class="na">action_alias</span><span class="p">(</span><span class="s1">'moderate'</span><span class="p">,</span> <span class="k">array</span><span class="p">(</span><span class="s1">'update'</span><span class="p">,</span> <span class="s1">'delete'</span><span class="p">));</span>
 
-        // If a user doesn't have any roles, we don't have to give him permissions so we can stop right here.
-        if(count($user-&gt;roles) == 0) return false;
+        <span class="c1">// If a user doesn't have any roles, we don't have to give him permissions so we can stop right here.</span>
+        <span class="k">if</span><span class="p">(</span><span class="nb">count</span><span class="p">(</span><span class="nv">$user</span><span class="o">-&gt;</span><span class="na">roles</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="k">return</span> <span class="k">false</span><span class="p">;</span>
 
-        // Let's say we want to "Deny" the User from adding accounts if his age is below 21 (i don't mean to discriminate ;) 
-        // Since we have the User object, and it has an "age" property, we can make a simple if statement.
-        if($user-&gt;age &lt; 21)
-        {
-            // Too young! we "deny" the user to create users, i'm sorry...
-            Authority::deny('create', 'User');
-        }
+        <span class="c1">// Let's say we want to "Deny" the User from adding accounts if his age is below 21 (i don't mean to discriminate ;) </span>
+        <span class="c1">// Since we have the User object, and it has an "age" property, we can make a simple if statement.</span>
+        <span class="k">if</span><span class="p">(</span><span class="nv">$user</span><span class="o">-&gt;</span><span class="na">age</span> <span class="o">&lt;</span> <span class="mi">21</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="c1">// Too young! we "deny" the user to create users, i'm sorry...</span>
+            <span class="nx">Authority</span><span class="o">::</span><span class="na">deny</span><span class="p">(</span><span class="s1">'create'</span><span class="p">,</span> <span class="s1">'User'</span><span class="p">);</span>
+        <span class="p">}</span>
 
-        if($user-&gt;has_role('admin'))
-        {
-            // The logged in user is an admin, we allow him to perform manage actions (create, read, update, delete) on "all" "Resources".
-            Authority::allow('manage', 'all');
+        <span class="k">if</span><span class="p">(</span><span class="nv">$user</span><span class="o">-&gt;</span><span class="na">has_role</span><span class="p">(</span><span class="s1">'admin'</span><span class="p">))</span>
+        <span class="p">{</span>
+            <span class="c1">// The logged in user is an admin, we allow him to perform manage actions (create, read, update, delete) on "all" "Resources".</span>
+            <span class="nx">Authority</span><span class="o">::</span><span class="na">allow</span><span class="p">(</span><span class="s1">'manage'</span><span class="p">,</span> <span class="s1">'all'</span><span class="p">);</span>
 
-            // Let's make it a little harder, we don't want the admin to be able to delete his own User account, but has to be allowed to delete other Users.
-            // We only know that the "Resource" is a User, But we don't know the User id, we can send that information to the Rule Closure, in the Closure below, the argument is called $that_user.
-            // We also pass in the logged in user, since the Closure is outside of the scope where this comment is in.
-            Authority::deny('delete', 'User', function ($that_user) use ($user)
-            {
-                // If the id of the User that we are trying to delete is equal to our logged in user, we return true, meaning the Deny Rule will be set.
-                return $that_user-&gt;id == $user-&gt;id;
-            });
-        }
+            <span class="c1">// Let's make it a little harder, we don't want the admin to be able to delete his own User account, but has to be allowed to delete other Users.</span>
+            <span class="c1">// We only know that the "Resource" is a User, But we don't know the User id, we can send that information to the Rule Closure, in the Closure below, the argument is called $that_user.</span>
+            <span class="c1">// We also pass in the logged in user, since the Closure is outside of the scope where this comment is in.</span>
+            <span class="nx">Authority</span><span class="o">::</span><span class="na">deny</span><span class="p">(</span><span class="s1">'delete'</span><span class="p">,</span> <span class="s1">'User'</span><span class="p">,</span> <span class="k">function</span> <span class="p">(</span><span class="nv">$that_user</span><span class="p">)</span> <span class="k">use</span> <span class="p">(</span><span class="nv">$user</span><span class="p">)</span>
+            <span class="p">{</span>
+                <span class="c1">// If the id of the User that we are trying to delete is equal to our logged in user, we return true, meaning the Deny Rule will be set.</span>
+                <span class="k">return</span> <span class="nv">$that_user</span><span class="o">-&gt;</span><span class="na">id</span> <span class="o">==</span> <span class="nv">$user</span><span class="o">-&gt;</span><span class="na">id</span><span class="p">;</span>
+            <span class="p">});</span>
+        <span class="p">}</span>
 
-        if($user-&gt;has_role('store_owner'))
-        {
-            // What if the logged in User has the role "store_owner", let's allow the user to manage his own store
-            Authority::allow('manage', 'Store', function($store) use ($user)
-            {
-                return ! is_null(DB::table('stores')-&gt;where_id($store-&gt;id)-&gt;where_user_id($user-&gt;id)-&gt;first());
-            });
-        }
+        <span class="k">if</span><span class="p">(</span><span class="nv">$user</span><span class="o">-&gt;</span><span class="na">has_role</span><span class="p">(</span><span class="s1">'store_owner'</span><span class="p">))</span>
+        <span class="p">{</span>
+            <span class="c1">// What if the logged in User has the role "store_owner", let's allow the user to manage his own store</span>
+            <span class="nx">Authority</span><span class="o">::</span><span class="na">allow</span><span class="p">(</span><span class="s1">'manage'</span><span class="p">,</span> <span class="s1">'Store'</span><span class="p">,</span> <span class="k">function</span><span class="p">(</span><span class="nv">$store</span><span class="p">)</span> <span class="k">use</span> <span class="p">(</span><span class="nv">$user</span><span class="p">)</span>
+            <span class="p">{</span>
+                <span class="k">return</span> <span class="o">!</span> <span class="nb">is_null</span><span class="p">(</span><span class="nx">DB</span><span class="o">::</span><span class="na">table</span><span class="p">(</span><span class="s1">'stores'</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">where_id</span><span class="p">(</span><span class="nv">$store</span><span class="o">-&gt;</span><span class="na">id</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">where_user_id</span><span class="p">(</span><span class="nv">$user</span><span class="o">-&gt;</span><span class="na">id</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">first</span><span class="p">());</span>
+            <span class="p">});</span>
+        <span class="p">}</span>
 
-        // We can set Allow and Deny Rules by looping through results we get from somewhere else, in this example, a database
-        foreach(DB::table('rules')-&gt;where_user_id($user-&gt;id)-&gt;get() as $permission)
-        {
-            if($permission-&gt;type == 'allow')
-            {
-                Authority::allow($permission-&gt;action, $permission-&gt;resource);
-            }
-            else
-            {
-                Authority::deny($permission-&gt;action, $permission-&gt;resource);
-            }
-        }
-    }
-</code></pre>
+        <span class="c1">// We can set Allow and Deny Rules by looping through results we get from somewhere else, in this example, a database</span>
+        <span class="k">foreach</span><span class="p">(</span><span class="nx">DB</span><span class="o">::</span><span class="na">table</span><span class="p">(</span><span class="s1">'rules'</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">where_user_id</span><span class="p">(</span><span class="nv">$user</span><span class="o">-&gt;</span><span class="na">id</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">()</span> <span class="k">as</span> <span class="nv">$permission</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="k">if</span><span class="p">(</span><span class="nv">$permission</span><span class="o">-&gt;</span><span class="na">type</span> <span class="o">==</span> <span class="s1">'allow'</span><span class="p">)</span>
+            <span class="p">{</span>
+                <span class="nx">Authority</span><span class="o">::</span><span class="na">allow</span><span class="p">(</span><span class="nv">$permission</span><span class="o">-&gt;</span><span class="na">action</span><span class="p">,</span> <span class="nv">$permission</span><span class="o">-&gt;</span><span class="na">resource</span><span class="p">);</span>
+            <span class="p">}</span>
+            <span class="k">else</span>
+            <span class="p">{</span>
+                <span class="nx">Authority</span><span class="o">::</span><span class="na">deny</span><span class="p">(</span><span class="nv">$permission</span><span class="o">-&gt;</span><span class="na">action</span><span class="p">,</span> <span class="nv">$permission</span><span class="o">-&gt;</span><span class="na">resource</span><span class="p">);</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+</pre></div>
 
 <p>Now that we have the initialize method setup, we can do checks throughout our code (controllers/models/views) like this</p>
 
-<pre><code>    // in some controller
-    if(Authority::cannot('create', 'User'))
-    {
-        Redirect::to('home');
-    }
+<div class="highlight"><pre>    <span class="c1">// in some controller</span>
+    <span class="k">if</span><span class="p">(</span><span class="nx">Authority</span><span class="o">::</span><span class="na">cannot</span><span class="p">(</span><span class="s1">'create'</span><span class="p">,</span> <span class="s1">'User'</span><span class="p">))</span>
+    <span class="p">{</span>
+        <span class="nx">Redirect</span><span class="o">::</span><span class="na">to</span><span class="p">(</span><span class="s1">'home'</span><span class="p">);</span>
+    <span class="p">}</span>
 
-    // in some view
-    &lt;?php if(Authority::can('edit', 'User')): ?&gt;
-        &lt;?php echo HTML::link('users/edit/'.$user-&gt;id, 'Edit User'); ?&gt;
-    &lt;?php endif ?&gt;
+    <span class="c1">// in some view</span>
+    <span class="o">&lt;?</span><span class="nx">php</span> <span class="k">if</span><span class="p">(</span><span class="nx">Authority</span><span class="o">::</span><span class="na">can</span><span class="p">(</span><span class="s1">'edit'</span><span class="p">,</span> <span class="s1">'User'</span><span class="p">))</span><span class="o">:</span> <span class="cp">?&gt;</span><span class="x"></span>
+<span class="x">        </span><span class="cp">&lt;?php</span> <span class="k">echo</span> <span class="nx">HTML</span><span class="o">::</span><span class="na">link</span><span class="p">(</span><span class="s1">'users/edit/'</span><span class="o">.</span><span class="nv">$user</span><span class="o">-&gt;</span><span class="na">id</span><span class="p">,</span> <span class="s1">'Edit User'</span><span class="p">);</span> <span class="cp">?&gt;</span><span class="x"></span>
+<span class="x">    </span><span class="cp">&lt;?php</span> <span class="k">endif</span> <span class="cp">?&gt;</span><span class="x"></span>
 
-    // In some model
-    $user = User::find($id);
-    if(Authority::can('delete', 'User', $user))
-    {
-        $user-&gt;delete();
-    }
-</code></pre>
+<span class="x">    // In some model</span>
+<span class="x">    $user = User::find($id);</span>
+<span class="x">    if(Authority::can('delete', 'User', $user))</span>
+<span class="x">    {</span>
+<span class="x">        $user-&gt;delete();</span>
+<span class="x">    }</span>
+</pre></div>
 
 <h2>Support or Contact</h2>
 
@@ -284,16 +292,12 @@ $ php artisan migrate:install
 
 <p>To (<a href="https://github.com/machuga" class="user-mention">@machuga</a>) for porting CanCan to PHP</p>
       </section>
-    </div>
-
-    <!-- FOOTER  -->
-    <div id="footer_wrap" class="outer">
-      <footer class="inner">
-        <p class="copyright">Authority maintained by <a href="https://github.com/Vespakoen">Vespakoen</a></p>
-        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      <footer>
+        <p>Project maintained by <a href="https://github.com/Vespakoen">Vespakoen</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="http://twitter.com/#!/michigangraham">mattgraham</a></small></p>
       </footer>
     </div>
-
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
               <script type="text/javascript">
             var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
             document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
@@ -304,7 +308,6 @@ $ php artisan migrate:install
             pageTracker._trackPageview();
             } catch(err) {}
           </script>
-
 
   </body>
 </html>
