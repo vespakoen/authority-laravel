@@ -1,45 +1,36 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <title>Authority by Vespakoen</title>
-    <link rel="stylesheet" href="stylesheets/styles.css">
-    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
-    <script src="javascripts/main.js"></script>
-    <!--[if lt IE 9]>
-      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
-    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
 
+  <head>
+    <meta charset='utf-8' />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+    <meta name="description" content="Authority : Role Based Access Control bundle for Laravel" />
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>Authority</title>
   </head>
+
   <body>
 
-      <header>
-        <h1>Authority</h1>
-        <p>Role Based Access Control bundle for Laravel</p>
-      </header>
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/Vespakoen/authority-laravel">View on GitHub</a>
 
-      <div id="banner">
-        <span id="logo"></span>
+          <h1 id="project_title">Authority</h1>
+          <h2 id="project_tagline">Role Based Access Control bundle for Laravel</h2>
 
-        <a href="https://github.com/Vespakoen/authority-laravel" class="button fork"><strong>Fork On GitHub</strong></a>
-        <div class="downloads">
-          <span>Downloads:</span>
-          <ul>
-            <li><a href="https://github.com/Vespakoen/authority-laravel/zipball/master" class="button">ZIP</a></li>
-            <li><a href="https://github.com/Vespakoen/authority-laravel/tarball/master" class="button">TAR</a></li>
-          </ul>
-        </div>
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/Vespakoen/authority-laravel/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/Vespakoen/authority-laravel/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
 
-      </div><!-- end banner -->
-
-    <div class="wrapper">
-      <nav>
-        <ul></ul>
-      </nav>
-      <section>
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
         <h1>Welcome to Authority for Laravel.</h1>
 
 <p>This is a clone from codeigniter-authority-authorization
@@ -51,18 +42,27 @@ All credits go to <strong><em>machuga</em></strong> for PHP-izing this awesome l
 <ul>
 <li>Enter your database settings in config/database.php</li>
 <li>Choose a session driver in config/session.php</li>
-<li>If you haven't done so already, install Migrations: <br />
-<pre><code>$ cd to/your/project/root/
-$ php artisan migrate:install
-</code></pre></li>
-<li>Run the following commands on the terminal
-<pre><code>$ cd to/your/project/root/
+<li>Run the following commands on the terminal</li>
+</ul><pre><code>$ cd to/your/project/root/
 $ php artisan bundle:install authority
 $ php artisan migrate:install
-$ php artisan migrate authority
 </code></pre>
-</li>
-</ul>
+
+<p>Before we can run the migration, you will have to register the bundle as seen below.</p>
+
+<ul>
+<li>Edit <strong><em>application/bundles.php</em></strong> and add authority to the array as seen below</li>
+</ul><div class="highlight"><pre><span class="k">return</span> <span class="k">array</span><span class="p">(</span>
+    <span class="s1">'authority'</span> <span class="o">=&gt;</span> <span class="k">array</span><span class="p">(</span>
+        <span class="s1">'auto'</span> <span class="o">=&gt;</span> <span class="k">true</span>
+    <span class="p">)</span>
+<span class="p">)</span>
+</pre></div>
+
+<p>Now we can run authority's migration to setup the tables</p>
+
+<pre><code>$ php artisan migrate authority
+</code></pre>
 
 <p>Since we don't want updates (via artisan, Laravel's CLI) to break our configuration later, we move the config outside of the Authority bundle.</p>
 
@@ -71,16 +71,29 @@ $ php artisan migrate authority
 </li>
 </ul><p>If you want your authority config to live in another bundle, you have to point to that location by changing the location in <strong><em>bundles/authority/authority.php</em></strong>.</p>
 
-<ul>
-<li>Edit <strong><em>application/bundles.php</em></strong> and add authority to the array as seen below</li>
-</ul><div class="highlight">
-<pre><span class="x">return array(</span>
-<span class="x">    'authority' =&gt; array(</span>
-<span class="x">        'auto' =&gt; true</span>
-<span class="x">    )</span>
-<span class="x">)</span>
-</pre>
-</div>
+<h3>Changing auth config to use Eloquent</h3>
+
+<p>For Authority to work, we need to get the logged in user, we use Laravel's auth for this, for this to work, we want Laravel to return the User class, we can do that by changing 2 functions in <strong><em>application/config/auth.php</em></strong></p>
+
+<div class="highlight"><pre><span class="s1">'user'</span> <span class="o">=&gt;</span> <span class="k">function</span><span class="p">(</span><span class="nv">$id</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nb">filter_var</span><span class="p">(</span><span class="nv">$id</span><span class="p">,</span> <span class="nx">FILTER_VALIDATE_INT</span><span class="p">)</span> <span class="o">!==</span> <span class="k">false</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">User</span><span class="o">::</span><span class="na">find</span><span class="p">(</span><span class="nv">$id</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">},</span>
+
+<span class="s1">'attempt'</span> <span class="o">=&gt;</span> <span class="k">function</span><span class="p">(</span><span class="nv">$username</span><span class="p">,</span> <span class="nv">$password</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="nv">$user</span> <span class="o">=</span> <span class="nx">User</span><span class="o">::</span><span class="na">where_username</span><span class="p">(</span><span class="nv">$username</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">first</span><span class="p">();</span>
+
+    <span class="k">if</span> <span class="p">(</span> <span class="o">!</span> <span class="nb">is_null</span><span class="p">(</span><span class="nv">$user</span><span class="p">)</span> <span class="k">and</span> <span class="nx">Hash</span><span class="o">::</span><span class="na">check</span><span class="p">(</span><span class="nv">$password</span><span class="p">,</span> <span class="nv">$user</span><span class="o">-&gt;</span><span class="na">password</span><span class="p">))</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="nv">$user</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">},</span>
+
+</pre></div>
 
 <h3>Adding the models</h3>
 
@@ -88,67 +101,61 @@ $ php artisan migrate authority
 
 <p><strong><em>application/models/user.php</em></strong></p>
 
-<div class="highlight">
-<pre><span class="x">class User extends Eloquent {</span>
+<div class="highlight"><pre><span class="k">class</span> <span class="nc">User</span> <span class="k">extends</span> <span class="nx">Model</span> <span class="p">{</span>
 
-<span class="x">    public static $timestamps = true;</span>
+    <span class="k">public</span> <span class="k">static</span> <span class="nv">$timestamps</span> <span class="o">=</span> <span class="k">true</span><span class="p">;</span>
 
-<span class="x">    public function roles()</span>
-<span class="x">    {</span>
-<span class="x">        return $this-&gt;has_many_and_belongs_to('Role', 'role_user');</span>
-<span class="x">    }</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">roles</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">has_many_and_belongs_to</span><span class="p">(</span><span class="s1">'Role'</span><span class="p">,</span> <span class="s1">'role_user'</span><span class="p">);</span>
+    <span class="p">}</span>
 
-<span class="x">    public function has_role($key)</span>
-<span class="x">    {</span>
-<span class="x">        foreach(Auth::user()-&gt;roles as $role)</span>
-<span class="x">        {</span>
-<span class="x">            if($role-&gt;name == $key)</span>
-<span class="x">            {</span>
-<span class="x">                return true;</span>
-<span class="x">            }</span>
-<span class="x">        }</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">has_role</span><span class="p">(</span><span class="nv">$key</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">foreach</span><span class="p">(</span><span class="nx">Auth</span><span class="o">::</span><span class="na">user</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">roles</span> <span class="k">as</span> <span class="nv">$role</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="k">if</span><span class="p">(</span><span class="nv">$role</span><span class="o">-&gt;</span><span class="na">name</span> <span class="o">==</span> <span class="nv">$key</span><span class="p">)</span>
+            <span class="p">{</span>
+                <span class="k">return</span> <span class="k">true</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
 
-<span class="x">        return false;</span>
-<span class="x">    }</span>
+        <span class="k">return</span> <span class="k">false</span><span class="p">;</span>
+    <span class="p">}</span>
 
-<span class="x">    public function has_any_role($keys)</span>
-<span class="x">    {</span>
-<span class="x">        if( ! is_array($keys))</span>
-<span class="x">        {</span>
-<span class="x">            $keys = func_get_args();</span>
-<span class="x">        }</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">has_any_role</span><span class="p">(</span><span class="nv">$keys</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">if</span><span class="p">(</span> <span class="o">!</span> <span class="nb">is_array</span><span class="p">(</span><span class="nv">$keys</span><span class="p">))</span>
+        <span class="p">{</span>
+            <span class="nv">$keys</span> <span class="o">=</span> <span class="nb">func_get_args</span><span class="p">();</span>
+        <span class="p">}</span>
 
-<span class="x">        foreach(Auth::user()-&gt;roles as $role)</span>
-<span class="x">        {</span>
-<span class="x">            if(in_array($role-&gt;name, $keys))</span>
-<span class="x">            {</span>
-<span class="x">                return true;</span>
-<span class="x">            }</span>
-<span class="x">        }</span>
+        <span class="k">foreach</span><span class="p">(</span><span class="nx">Auth</span><span class="o">::</span><span class="na">user</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">roles</span> <span class="k">as</span> <span class="nv">$role</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="k">if</span><span class="p">(</span><span class="nb">in_array</span><span class="p">(</span><span class="nv">$role</span><span class="o">-&gt;</span><span class="na">name</span><span class="p">,</span> <span class="nv">$keys</span><span class="p">))</span>
+            <span class="p">{</span>
+                <span class="k">return</span> <span class="k">true</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
 
-<span class="x">        return false;</span>
-<span class="x">    }</span>
-<span class="x">}</span>
-</pre>
-</div>
-
+        <span class="k">return</span> <span class="k">false</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
 
 <h4>Role model</h4>
 
 <p><strong><em>application/models/role.php</em></strong></p>
 
-<div class="highlight">
-<pre><span class="x">class Role extends Eloquent {</span>
+<div class="highlight"><pre><span class="k">class</span> <span class="nc">Role</span> <span class="k">extends</span> <span class="nx">Model</span> <span class="p">{</span>
 
-<span class="x">    public function users()</span>
-<span class="x">    {</span>
-<span class="x">        return $this-&gt;has_many_and_belongs_to('User');</span>
-<span class="x">    }</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">users</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">has_many_and_belongs_to</span><span class="p">(</span><span class="s1">'User'</span><span class="p">);</span>
+    <span class="p">}</span>
 
-<span class="x">}</span>
-</pre>
-</div>
-
+<span class="p">}</span>
+</pre></div>
 
 <h2>Using Authority</h2>
 
@@ -165,20 +172,16 @@ $ php artisan migrate authority
 </ul><h4>Resources</h4>
 
 <ul>
-<li>Resource is simply a name for a thing or group of things (User, Page, UserEditButton, PageTitle)</li>
+<li>Resources is simply a name for a thing or group of things (User, Page, UserEditButton, PageTitle)</li>
 <li>Resources are strings</li>
-<li>There is an "all" wildcard Resource predefined (handy for admins)</li>
-</ul>
-
-<h4>Rules</h4>
+<li>There is a "all" wildcard Resource predefined (handy for admins)</li>
+</ul><h4>Rules</h4>
 
 <ul>
 <li>A Rule is a way to allow or deny a User to perform an Action on a Resource</li>
 <li>A Rule contains 1 Action, 1 Resource and optionally a Closure (internal logic)</li>
 <li>Rules will be initialized once per page load (only when being called) for the user that does the request</li>
-</ul>
-
-<h4>Allow</h4>
+</ul><h4>Allow</h4>
 
 <ul>
 <li>Allow applies a Rule to a User, that allows the user to perform an Action on a Resource</li>
@@ -273,19 +276,35 @@ $ php artisan migrate authority
 
 <h2>Support or Contact</h2>
 
-<p>Having trouble with Authority? Find me in the #laravel IRC channel or contact me @ k.schmeets@gmail.com and i’ll help you sort it out.</p>
+<p>Having trouble with Authority? Find me in the #laravel IRC channel or contact me @ <a href="mailto:k.schmeets@gmail.com">k.schmeets@gmail.com</a> and i’ll help you sort it out.</p>
 
 <h2>A big Thanks</h2>
 
-<p>To (<a href="/ryanb" class="user-mention">@ryanb</a>) for making CanCan</p>
+<p>To (<a href="https://github.com/ryanb" class="user-mention">@ryanb</a>) for making CanCan</p>
 
-<p>To (<a href="/machuga" class="user-mention">@machuga</a>) for porting CanCan to PHP</p>
+<p>To (<a href="https://github.com/machuga" class="user-mention">@machuga</a>) for porting CanCan to PHP</p>
       </section>
-      <footer>
-        <p>Project maintained by <a href="https://github.com/Vespakoen">Vespakoen</a></p>
-        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="http://twitter.com/#!/michigangraham">mattgraham</a></small></p>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">Authority maintained by <a href="https://github.com/Vespakoen">Vespakoen</a></p>
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
       </footer>
     </div>
-    <!--[if !IE]><script>fixScale(document);</script><!--<![endif]-->
+
+              <script type="text/javascript">
+            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+          </script>
+          <script type="text/javascript">
+            try {
+              var pageTracker = _gat._getTracker("&lt;script type=&quot;text/javascript&quot;&gt;    var _gaq = _gaq || [];   _gaq.push(['_setAccount', 'UA-30563892-1']);   _gaq.push(['_trackPageview']);    (function() {     var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;     ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';     var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);   })();  &lt;/script&gt;");
+            pageTracker._trackPageview();
+            } catch(err) {}
+          </script>
+
+
   </body>
 </html>
