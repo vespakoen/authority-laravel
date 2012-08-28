@@ -1,4 +1,4 @@
 <?php
 Laravel\Autoloader::map(array(
-	'Authority' => path('bundle').'authority/authority'.EXT,
+	'Authority' => Bundle::path('authority').'/authority'.EXT,
 ));
