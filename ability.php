@@ -22,22 +22,11 @@ use Laravel\Auth;
 abstract class Ability {
 
 	protected static $_rules = array();
+
 	protected static $_action_aliases = array();
-
-	public static function initialize($user)
-	{
-		$config = Config::get('authority::authority');
-
-		call_user_func($config['initialize'], $user);
-	}
 
 	public static function can($action, $resource, $resource_val = null)
 	{
-		if (empty(static::$_rules))
-		{
-			static::initialize(static::current_user());
-		}
-
 		// See if the action has been aliased to somethign else
 		$true_action = static::determine_action($action);
 
@@ -119,13 +108,10 @@ abstract class Ability {
 		return $matches;
 	}
 
-	public function __construct()
+	public static function reset()
 	{
-		static::initialize(static::current_user());
+		static::$_rules = array();
+		static::$_action_aliases = array();
 	}
 
-	protected static function current_user()
-	{
-		return Auth::user() ?: new User;
-	}
 }

@@ -23,15 +23,19 @@ use Laravel\Auth;
 
 class Authority extends Authority\Ability {
 
-	protected static function current_user()
-	{
-		return Auth::user() ?: new User;
-	}
-
 	public static function initialize($user)
 	{
-		$config = Config::get('authority');
-		call_user_func($config['initialize'], $user);
+		if(is_null($user)) return;
+
+		static::reset();
+		
+		$initialize = Config::get('authority.initialize');
+		call_user_func($initialize, $user);
+	}
+
+	public static function as_user($user)
+	{
+		static::initialize($user);
 	}
 
 }

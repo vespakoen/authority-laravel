@@ -13,12 +13,37 @@ class Authority_add_authority_tables {
 			$table->timestamps();
 		});
 
+		User::create(array(
+			'id' => 1,
+			'email' => 'admin@domain.com',
+			'password' => Hash::make('admin'),
+			'name' => 'Mr. Administrator',
+		));
+
+		User::create(array(
+			'id' => 2,
+			'email' => 'moderator@domain.com',
+			'password' => Hash::make('moderator'),
+			'name' => 'Mr. Moderator',
+		));
+
+
 		Schema::create('roles', function($table)
 		{
 			$table->increments('id');
 			$table->string('name');
 			$table->timestamps();
 		});
+
+		Role::create(array(
+			'id' => 1,
+			'name' => 'administrator'
+		));
+
+		Role::create(array(
+			'id' => 2,
+			'name' => 'moderator'
+		));
 
 		Schema::create('role_user', function($table)
 		{
@@ -27,6 +52,14 @@ class Authority_add_authority_tables {
 			$table->integer('role_id');
 			$table->timestamps();
 		});
+
+		User::find(1)
+			->roles()
+			->attach(1);
+
+		User::find(2)
+			->roles()
+			->attach(2);
 	}
 
 	public function down()
