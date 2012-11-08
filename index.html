@@ -7,38 +7,37 @@
     <link rel="stylesheet" href="stylesheets/styles.css">
     <link rel="stylesheet" href="stylesheets/pygment_trac.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
-    <script src="javascripts/main.js"></script>
+    <script src="javascripts/respond.js"></script>
     <!--[if lt IE 9]>
       <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <!--[if lt IE 8]>
+    <link rel="stylesheet" href="stylesheets/ie.css">
     <![endif]-->
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
 
   </head>
   <body>
-
-      <header>
-        <h1>Authority</h1>
-        <p>Role Based Access Control bundle for Laravel</p>
-      </header>
-
-      <div id="banner">
-        <span id="logo"></span>
-
-        <a href="https://github.com/Vespakoen/authority-laravel" class="button fork"><strong>View On GitHub</strong></a>
-        <div class="downloads">
-          <span>Downloads:</span>
-          <ul>
-            <li><a href="https://github.com/Vespakoen/authority-laravel/zipball/master" class="button">ZIP</a></li>
-            <li><a href="https://github.com/Vespakoen/authority-laravel/tarball/master" class="button">TAR</a></li>
-          </ul>
-        </div>
-      </div><!-- end banner -->
+      <div id="header">
+        <nav>
+          <li class="fork"><a href="https://github.com/Vespakoen/authority-laravel">View On GitHub</a></li>
+          <li class="downloads"><a href="https://github.com/Vespakoen/authority-laravel/zipball/master">ZIP</a></li>
+          <li class="downloads"><a href="https://github.com/Vespakoen/authority-laravel/tarball/master">TAR</a></li>
+          <li class="title">DOWNLOADS</li>
+        </nav>
+      </div><!-- end header -->
 
     <div class="wrapper">
-      <nav>
-        <ul></ul>
-      </nav>
+
       <section>
+        <div id="title">
+          <h1>Authority</h1>
+          <p>Role Based Access Control bundle for Laravel</p>
+          <hr>
+          <span class="credits left">Project maintained by <a href="https://github.com/Vespakoen">Vespakoen</a></span>
+          <span class="credits right">Hosted on GitHub Pages &mdash; Theme by <a href="http://twitter.com/#!/michigangraham">mattgraham</a></span>
+        </div>
+
         <h1>Welcome to Authority for Laravel.</h1>
 
 <p>This is a clone from codeigniter-authority-authorization
@@ -79,29 +78,9 @@ $ php artisan migrate:install
 </li>
 </ul><p>If you want your authority config to live in another bundle, you have to point to that location by changing the location in <strong><em>bundles/authority/authority.php</em></strong>.</p>
 
-<h3>Changing auth config to use Eloquent</h3>
+<h3>Configuring the Auth driver</h3>
 
-<p>For Authority to work, we need to get the logged in user, we use Laravel's auth for this, for this to work, we want Laravel to return the User class, we can do that by changing 2 functions in <strong><em>application/config/auth.php</em></strong></p>
-
-<div class="highlight"><pre><span class="s1">'user'</span> <span class="o">=&gt;</span> <span class="k">function</span><span class="p">(</span><span class="nv">$id</span><span class="p">)</span>
-<span class="p">{</span>
-    <span class="k">if</span> <span class="p">(</span><span class="nb">filter_var</span><span class="p">(</span><span class="nv">$id</span><span class="p">,</span> <span class="nx">FILTER_VALIDATE_INT</span><span class="p">)</span> <span class="o">!==</span> <span class="k">false</span><span class="p">)</span>
-    <span class="p">{</span>
-        <span class="k">return</span> <span class="nx">User</span><span class="o">::</span><span class="na">find</span><span class="p">(</span><span class="nv">$id</span><span class="p">);</span>
-    <span class="p">}</span>
-<span class="p">},</span>
-
-<span class="s1">'attempt'</span> <span class="o">=&gt;</span> <span class="k">function</span><span class="p">(</span><span class="nv">$username</span><span class="p">,</span> <span class="nv">$password</span><span class="p">)</span>
-<span class="p">{</span>
-    <span class="nv">$user</span> <span class="o">=</span> <span class="nx">User</span><span class="o">::</span><span class="na">where_username</span><span class="p">(</span><span class="nv">$username</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">first</span><span class="p">();</span>
-
-    <span class="k">if</span> <span class="p">(</span> <span class="o">!</span> <span class="nb">is_null</span><span class="p">(</span><span class="nv">$user</span><span class="p">)</span> <span class="k">and</span> <span class="nx">Hash</span><span class="o">::</span><span class="na">check</span><span class="p">(</span><span class="nv">$password</span><span class="p">,</span> <span class="nv">$user</span><span class="o">-&gt;</span><span class="na">password</span><span class="p">))</span>
-    <span class="p">{</span>
-        <span class="k">return</span> <span class="nv">$user</span><span class="p">;</span>
-    <span class="p">}</span>
-<span class="p">},</span>
-
-</pre></div>
+<p>Open up <strong><em>application/config/auth.php</em></strong> and change the <strong>value</strong> of "driver" to "eloquent"</p>
 
 <h3>Adding the models</h3>
 
@@ -109,7 +88,7 @@ $ php artisan migrate:install
 
 <p><strong><em>application/models/user.php</em></strong></p>
 
-<div class="highlight"><pre><span class="k">class</span> <span class="nc">User</span> <span class="k">extends</span> <span class="nx">Model</span> <span class="p">{</span>
+<div class="highlight"><pre><span class="k">class</span> <span class="nc">User</span> <span class="k">extends</span> <span class="nx">Eloquent</span> <span class="p">{</span>
 
     <span class="k">public</span> <span class="k">static</span> <span class="nv">$timestamps</span> <span class="o">=</span> <span class="k">true</span><span class="p">;</span>
 
@@ -120,7 +99,7 @@ $ php artisan migrate:install
 
     <span class="k">public</span> <span class="k">function</span> <span class="nf">has_role</span><span class="p">(</span><span class="nv">$key</span><span class="p">)</span>
     <span class="p">{</span>
-        <span class="k">foreach</span><span class="p">(</span><span class="nx">Auth</span><span class="o">::</span><span class="na">user</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">roles</span> <span class="k">as</span> <span class="nv">$role</span><span class="p">)</span>
+        <span class="k">foreach</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">roles</span> <span class="k">as</span> <span class="nv">$role</span><span class="p">)</span>
         <span class="p">{</span>
             <span class="k">if</span><span class="p">(</span><span class="nv">$role</span><span class="o">-&gt;</span><span class="na">name</span> <span class="o">==</span> <span class="nv">$key</span><span class="p">)</span>
             <span class="p">{</span>
@@ -138,7 +117,7 @@ $ php artisan migrate:install
             <span class="nv">$keys</span> <span class="o">=</span> <span class="nb">func_get_args</span><span class="p">();</span>
         <span class="p">}</span>
 
-        <span class="k">foreach</span><span class="p">(</span><span class="nx">Auth</span><span class="o">::</span><span class="na">user</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">roles</span> <span class="k">as</span> <span class="nv">$role</span><span class="p">)</span>
+        <span class="k">foreach</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">roles</span> <span class="k">as</span> <span class="nv">$role</span><span class="p">)</span>
         <span class="p">{</span>
             <span class="k">if</span><span class="p">(</span><span class="nb">in_array</span><span class="p">(</span><span class="nv">$role</span><span class="o">-&gt;</span><span class="na">name</span><span class="p">,</span> <span class="nv">$keys</span><span class="p">))</span>
             <span class="p">{</span>
@@ -155,7 +134,7 @@ $ php artisan migrate:install
 
 <p><strong><em>application/models/role.php</em></strong></p>
 
-<div class="highlight"><pre><span class="k">class</span> <span class="nc">Role</span> <span class="k">extends</span> <span class="nx">Model</span> <span class="p">{</span>
+<div class="highlight"><pre><span class="k">class</span> <span class="nc">Role</span> <span class="k">extends</span> <span class="nx">Eloquent</span> <span class="p">{</span>
 
     <span class="k">public</span> <span class="k">function</span> <span class="nf">users</span><span class="p">()</span>
     <span class="p">{</span>
@@ -180,9 +159,9 @@ $ php artisan migrate:install
 </ul><h4>Resources</h4>
 
 <ul>
-<li>Resources is simply a name for a thing or group of things (User, Page, UserEditButton, PageTitle)</li>
+<li>Resource is simply a name for a thing or group of things (User, Page, UserEditButton, PageTitle)</li>
 <li>Resources are strings</li>
-<li>There is a "all" wildcard Resource predefined (handy for admins)</li>
+<li>There is an "all" wildcard Resource predefined (handy for admins)</li>
 </ul><h4>Rules</h4>
 
 <ul>
@@ -292,10 +271,7 @@ $ php artisan migrate:install
 
 <p>To (<a href="https://github.com/machuga" class="user-mention">@machuga</a>) for porting CanCan to PHP</p>
       </section>
-      <footer>
-        <p>Project maintained by <a href="https://github.com/Vespakoen">Vespakoen</a></p>
-        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="http://twitter.com/#!/michigangraham">mattgraham</a></small></p>
-      </footer>
+
     </div>
     <!--[if !IE]><script>fixScale(document);</script><![endif]-->
               <script type="text/javascript">
