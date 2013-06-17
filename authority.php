@@ -29,7 +29,7 @@ class Authority extends Authority\Ability {
 
 		static::reset();
 		
-		$initialize = Config::get('authority.initialize');
+		$initialize = Config::get('authority::authority.initialize');
 		call_user_func($initialize, $user);
 	}
 
